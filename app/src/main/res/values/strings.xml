@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">Fake_shop</string>
-    <string name="products">products</string>
-    <string name="follows">follows</string>
-    <string name="shop">shop</string>
+    <string name="products">Products</string>
+    <string name="follows">Follows</string>
+    <string name="shop">Shop</string>
     <string name="search">Search</string>
     <string name="loader">loader</string>
 </resources>

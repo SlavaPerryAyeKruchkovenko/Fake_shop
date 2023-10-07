@@ -7,7 +7,7 @@
         android:enabled="true"
         android:icon="@drawable/shop"
         app:showAsAction="ifRoom"
-        android:tooltipText="@string/products"
+        android:tooltipText="@string/shop"
         />
     <item
         android:id="@+id/navigation_follows"
