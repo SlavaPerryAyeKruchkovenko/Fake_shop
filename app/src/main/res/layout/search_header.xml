@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.appbar.AppBarLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/app_bar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_weight=".90"
+    android:background="@color/lime"
+    app:layout_constraintEnd_toStartOf="@+id/filter_btn"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent">
+
+    <androidx.appcompat.widget.SearchView
+        android:id="@+id/search_bar"
+        style="@style/Widget.AppCompat.SearchView.person"
+        android:theme="@style/TextAppearance.Material3.SearchBar.MyTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        app:closeIcon="@drawable/close"
+        app:iconifiedByDefault="false"
+        app:queryHint="@string/search"
+        app:queryBackground="@null"
+        app:searchIcon="@drawable/search" />
+</com.google.android.material.appbar.AppBarLayout>
