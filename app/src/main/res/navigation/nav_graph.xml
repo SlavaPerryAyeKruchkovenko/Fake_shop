@@ -6,7 +6,7 @@
     app:startDestination="@+id/navigation_shop">
     <fragment
         android:id="@+id/navigation_shop"
-        android:name="com.example.fake_shop.ui.ShopFragment"
+        android:name="com.example.fake_shop.ui.shop.ShopFragment"
         android:label="products"
         tools:layout="@layout/fragment_shop">
     </fragment>
