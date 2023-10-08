@@ -15,3 +15,5 @@
 local.properties
 /.idea
 /hs_err_pid4140.log
+/hs_err_pid1588.log
+/replay_pid1588.log
