@@ -10,6 +10,8 @@
     <color name="white">#FFFFFFFF</color>
     <color name="lime">#ff00ff00</color>
     <color name="lime_50">#ffd0ffd0</color>
+    <color name="lime_200">#ff53ec53</color>
     <color name="red">#ffff0000</color>
     <color name="blue">#ff00ffff</color>
+    <color name="blue_300">#00d6ff</color>
 </resources>

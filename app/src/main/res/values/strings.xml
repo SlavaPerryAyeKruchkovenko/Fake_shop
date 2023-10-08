@@ -2,7 +2,12 @@
     <string name="app_name">Fake_shop</string>
     <string name="products">Products</string>
     <string name="follows">Follows</string>
+    <string name="follow">Follow</string>
     <string name="shop">Shop</string>
     <string name="search">Search</string>
     <string name="loader">loader</string>
+    <string name="product">product</string>
+    <string name="no_data">No Data</string>
+    <string name="name_title">Name:</string>
+    <string name="price_title">Price:</string>
 </resources>
