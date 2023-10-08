@@ -14,7 +14,7 @@ class ShopViewModel(
     private val getProducts: IGetProductsUseCase,
 ) : ViewModel() {
     val liveData = MutableLiveData<OutputOf<List<Product>>>()
-    private var liveDataCopy: List<Product> = listOf()
+    private var products: List<Product> = listOf()
     fun init() {
         updateProducts()
     }
@@ -26,20 +26,23 @@ class ShopViewModel(
                 val productsResult = withContext(Dispatchers.IO) {
                     getProducts()
                 }
-
                 liveData.postValue(
                     when (productsResult) {
                         is OutputOf.Success -> {
                             if (productsResult.value.isNotEmpty()) {
-                                OutputOf.Success(productsResult.value.map {
+                                val productCopy = productsResult.value.map {
                                     it.toProduct()
-                                })
+                                }
+                                products = productCopy
+                                OutputOf.Success(products)
                             } else OutputOf.Error.NotFoundError()
                         }
                         is OutputOf.Error.ResponseError -> {
-                            OutputOf.Success(productsResult.value.map {
+                            val productCopy = productsResult.value.map {
                                 it.toProduct()
-                            })
+                            }
+                            products = productCopy
+                            OutputOf.Success(products)
                         }
                         is OutputOf.Error.InternetError -> {
                             OutputOf.Error.InternetError(productsResult.value.map {
@@ -54,7 +57,8 @@ class ShopViewModel(
         }
     }
     fun filterProductsByTitle(query: String) {
-        val result = liveDataCopy.filter { x -> x.title.lowercase().startsWith(query.lowercase()) }
+        liveData.postValue(OutputOf.Loader())
+        val result = products.filter { x -> x.title.lowercase().startsWith(query.lowercase()) }
         liveData.postValue(
             if (result.isNotEmpty())
                 OutputOf.Success(result)

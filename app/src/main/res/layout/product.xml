@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:background="@color/blue_300"
+            android:background="@color/gray_200"
             android:padding="10dp">
 
             <ImageView
@@ -35,7 +35,7 @@
                 android:id="@+id/product_block"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@color/lime_200"
+                android:backgroundTint="@color/white"
                 app:cardCornerRadius="16dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -81,7 +81,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/name_title"
                         android:textSize="24sp"
-                        android:textStyle="bold" />
+                        style="@style/ProductDescriptionBold"/>
 
                     <TextView
                         android:id="@+id/name"
@@ -89,7 +89,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="4dp"
                         android:text="@string/no_data"
-                        android:textSize="24sp" />
+                        android:textSize="24sp"
+                        style="@style/ProductDescription"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -103,7 +104,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/price_title"
                         android:textSize="24sp"
-                        android:textStyle="bold" />
+                        style="@style/ProductDescriptionBold" />
 
                     <TextView
                         android:id="@+id/price"
@@ -111,7 +112,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="4dp"
                         android:text="@string/no_data"
-                        android:textSize="24sp" />
+                        android:textSize="24sp"
+                        style="@style/ProductDescription"/>
                 </LinearLayout>
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>

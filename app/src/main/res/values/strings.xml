@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Fake_shop</string>
+    <string name="app_name">Fake Shop</string>
     <string name="products">Products</string>
     <string name="follows">Follows</string>
     <string name="follow">Follow</string>

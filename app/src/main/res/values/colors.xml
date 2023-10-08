@@ -8,10 +8,10 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="lime">#ff00ff00</color>
+    <color name="lime">#ff84b701</color>
     <color name="lime_50">#ffd0ffd0</color>
     <color name="lime_200">#ff53ec53</color>
     <color name="red">#ffff0000</color>
     <color name="blue">#ff00ffff</color>
-    <color name="blue_300">#00d6ff</color>
+    <color name="blue_300">#5500d6ff</color>
 </resources>
