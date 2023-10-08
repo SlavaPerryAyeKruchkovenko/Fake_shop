@@ -9,5 +9,13 @@
         android:name="com.example.fake_shop.ui.shop.ShopFragment"
         android:label="products"
         tools:layout="@layout/fragment_shop">
+        <action
+            android:id="@+id/action_shop_to_product"
+            app:destination="@id/navigation_product" />
     </fragment>
+    <fragment
+        android:id="@+id/navigation_product"
+        android:name="com.example.fake_shop.ui.product.ProductFragment"
+        android:label="fragment_product"
+        tools:layout="@layout/fragment_product" />
 </navigation>

@@ -1,6 +1,5 @@
 package com.example.fake_shop.ui.shop
 
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +8,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.fake_shop.R
 import com.example.fake_shop.adapters.ProductAdapter
@@ -16,8 +16,8 @@ import com.example.fake_shop.data.models.OutputOf
 import com.example.fake_shop.data.models.Product
 import com.example.fake_shop.databinding.FragmentShopBinding
 import com.example.fake_shop.listeners.ProductListener
-import org.koin.androidx.viewmodel.ext.android.getViewModel
 import com.google.android.material.snackbar.Snackbar
+import org.koin.androidx.viewmodel.ext.android.getViewModel
 
 class ShopFragment : Fragment(), ProductListener {
     private var _binding: FragmentShopBinding? = null
@@ -125,10 +125,10 @@ class ShopFragment : Fragment(), ProductListener {
     }
     override fun onClick(product: Product) {
         val bundle = Bundle()
-        /*bundle.apply {
-            putString("character_id", profile.id)
+        bundle.apply {
+            putString("product_id", product.id)
         }
-        findNavController().navigate(R.id.action_characters_to_character_portrait, bundle)*/
+        findNavController().navigate(R.id.action_shop_to_product, bundle)
     }
 
     override fun onDestroy() {

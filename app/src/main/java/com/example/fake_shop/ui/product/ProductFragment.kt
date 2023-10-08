@@ -1,6 +1,7 @@
 package com.example.fake_shop.ui.product
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +15,7 @@ import com.example.fake_shop.data.models.Product
 import com.example.fake_shop.databinding.FragmentProductBinding
 import com.example.fake_shop.ui.NavigationBarHelper
 import com.google.android.material.snackbar.Snackbar
+import com.squareup.picasso.Picasso
 import org.koin.androidx.viewmodel.ext.android.getViewModel
 
 class ProductFragment : Fragment() {
@@ -90,11 +92,20 @@ class ProductFragment : Fragment() {
             binding.category.text = product.category
             binding.rating.text = product.rating.toString()
             binding.count.text = product.count.toString()
+            try {
+                Picasso.get().load(product.image)
+                    .placeholder(R.drawable.loading_animation)
+                    .error(R.drawable.broken_image)
+                    .into(binding.image)
+            } catch (ex: Exception) {
+                Log.e("Error", ex.message.toString())
+                ex.printStackTrace()
+            }
         }
     }
 
     private fun initDownloadBtn() {
-        binding.share.setOnClickListener {
+        binding.download.setOnClickListener {
             viewShackBar("Функция скачивания еще не реализована")
         }
     }
