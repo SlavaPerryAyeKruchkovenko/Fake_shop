@@ -47,8 +47,14 @@ class ProductRepository(
             if (res.isSuccessful) {
                 val productResponse = res.body()!!
                 val product = ProductConverter.fromProductResponse(productResponse)
-                local.updateProduct(product.toProductEntity())
-                OutputOf.Success(product)
+                val productEntity = local.getProduct(product.id)
+                if(productEntity != null){
+                    OutputOf.Success(ProductConverter.fromProductEntity(productEntity))
+                }
+                else{
+                    OutputOf.Error.NotFoundError()
+                }
+
             } else {
                 val entity = local.getProduct(id)
                 val product = if (entity != null) {

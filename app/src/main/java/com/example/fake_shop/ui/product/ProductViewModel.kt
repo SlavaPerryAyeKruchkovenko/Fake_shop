@@ -3,14 +3,21 @@ package com.example.fake_shop.ui.product
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.fake_shop.data.converters.ProductConverter
 import com.example.fake_shop.data.models.OutputOf
 import com.example.fake_shop.data.models.Product
+import com.example.fake_shop.domain.interfaces.IDislikeProductUseCase
 import com.example.fake_shop.domain.interfaces.IGetProductUseCase
+import com.example.fake_shop.domain.interfaces.ILikeProductUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class ProductViewModel(private val getProduct: IGetProductUseCase) : ViewModel() {
+class ProductViewModel(
+    private val getProduct: IGetProductUseCase,
+    private val likeProduct: ILikeProductUseCase,
+    private val dislikeProduct: IDislikeProductUseCase,
+) : ViewModel() {
     val productLiveData = MutableLiveData<OutputOf<Product?>>()
     val isLikedLiveData = MutableLiveData(false)
     fun init(productId: String) {
@@ -55,19 +62,24 @@ class ProductViewModel(private val getProduct: IGetProductUseCase) : ViewModel()
 
     fun changeLike() {
         viewModelScope.launch {
-            if (productLiveData.value is OutputOf.Success) {
-                if (productLiveData.value != null) {
-                    val product = (productLiveData.value as OutputOf.Success<Product?>).value
-                    /*val characterConvert = withContext(Dispatchers.IO) {
-                        if (character.isLike) {
-                            dislikeCharacter(CharacterConvert.fromCharacter(character))
+            if (productLiveData.value is OutputOf.Success || productLiveData.value is OutputOf.Error.InternetError) {
+                val product = (productLiveData.value as OutputOf.Success<Product?>).value
+                if (product != null) {
+                    val productConvert = withContext(Dispatchers.IO) {
+                        if (product.isLike) {
+                            dislikeProduct(ProductConverter.fromProduct(product))
                         } else {
-                            likeCharacter(CharacterConvert.fromCharacter(character))
+                            likeProduct(ProductConverter.fromProduct(product))
                         }
                     }
-                    val newCharacter = characterConvert.toCharacter()
-                    isLikedLiveData.postValue(newCharacter.isLike)
-                    productLiveData.postValue(newCharacter)*/
+                    if (productConvert != null) {
+                        val newProduct = productConvert.toProduct()
+                        isLikedLiveData.postValue(newProduct.isLike)
+                        productLiveData.postValue(OutputOf.Success(newProduct))
+                    } else {
+                        productLiveData.postValue(OutputOf.Error.NotFoundError())
+                    }
+
                 }
             }
         }

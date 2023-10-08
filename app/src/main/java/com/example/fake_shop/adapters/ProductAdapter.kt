@@ -79,7 +79,7 @@ class ProductAdapter(private val listener: ProductListener) :
             oldItem: Product,
             newItem: Product
         ): Boolean {
-            return oldItem.id == newItem.id
+            return oldItem.id == newItem.id && oldItem.isLike == newItem.isLike
         }
     }
 }

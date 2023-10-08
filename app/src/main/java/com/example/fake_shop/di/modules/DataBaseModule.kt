@@ -10,7 +10,7 @@ val dataBaseModule = module {
             get(),
             FakeShopDataBase::class.java,
             "FakeShopDataBaseName"
-        )
+        ).build()
     }
     single {
         get<FakeShopDataBase>().productsDao()

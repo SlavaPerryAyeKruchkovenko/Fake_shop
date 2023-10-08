@@ -49,8 +49,28 @@ class ProductFragment : Fragment() {
         binding.appbar.toolBar.setNavigationOnClickListener {
             findNavController().popBackStack()
         }
-        initLikeBtn()
-        initNotifyBtn()
+        binding.appbar.toolBar.setOnMenuItemClickListener {
+            when (it?.itemId) {
+                R.id.like -> {
+                    viewModel.changeLike()
+                    true
+                }
+                R.id.notify -> {
+                    viewShackBar("функция уведомления еще не реализована")
+                    true
+                }
+                else -> false
+            }
+        }
+        val likeObserver = Observer<Boolean> { newValue ->
+            val likeIcon = binding.appbar.toolBar.menu.findItem(R.id.like)
+            if (newValue) {
+                likeIcon.setIcon(R.drawable.heart_fill)
+            } else {
+                likeIcon.setIcon(R.drawable.heart)
+            }
+        }
+        viewModel.isLikedLiveData.observe(viewLifecycleOwner, likeObserver)
     }
 
     private fun initProduct() {
@@ -113,39 +133,6 @@ class ProductFragment : Fragment() {
     private fun initShareBtn() {
         binding.share.setOnClickListener {
             viewShackBar("Функция поделиться еще не доступна")
-        }
-    }
-
-    private fun initLikeBtn() {
-        binding.appbar.toolBar.setOnMenuItemClickListener {
-            when (it?.itemId) {
-                R.id.like -> {
-                    viewModel.changeLike()
-                    true
-                }
-                else -> false
-            }
-        }
-        val likeObserver = Observer<Boolean> { newValue ->
-            val likeIcon = binding.appbar.toolBar.menu.findItem(R.id.like)
-            if (newValue) {
-                likeIcon.setIcon(R.drawable.heart_fill)
-            } else {
-                likeIcon.setIcon(R.drawable.heart)
-            }
-        }
-        viewModel.isLikedLiveData.observe(viewLifecycleOwner, likeObserver)
-    }
-
-    private fun initNotifyBtn() {
-        binding.appbar.toolBar.setOnMenuItemClickListener {
-            when (it?.itemId) {
-                R.id.notify -> {
-                    viewShackBar("функция уведомления еще не реализована")
-                    true
-                }
-                else -> false
-            }
         }
     }
 
