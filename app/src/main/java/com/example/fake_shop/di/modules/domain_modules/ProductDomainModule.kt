@@ -1,9 +1,7 @@
 package com.example.fake_shop.di.modules.domain_modules
 
-import com.example.fake_shop.domain.interfaces.IGetProductUseCase
-import com.example.fake_shop.domain.interfaces.IGetProductsUseCase
-import com.example.fake_shop.domain.useCases.GetProductUseCase
-import com.example.fake_shop.domain.interfaces.useCases.GetProductsUseCase
+import com.example.fake_shop.domain.interfaces.*
+import com.example.fake_shop.domain.useCases.*
 import org.koin.dsl.module
 
 val productDomainModule = module {
@@ -12,5 +10,17 @@ val productDomainModule = module {
     }
     factory<IGetProductUseCase> {
         GetProductUseCase(repository = get())
+    }
+    factory<IGetLikedProductsUseCase> {
+        GetLikedProductsUseCase(repository = get())
+    }
+    factory<ILikeProductUseCase> {
+        LikeProductUseCase(repository = get())
+    }
+    factory<IDislikeProductUseCase> {
+        DislikeProductUseCase(repository = get())
+    }
+    factory<IDislikeProductsUseCase> {
+        DislikeProductsUseCase(repository = get())
     }
 }

@@ -5,6 +5,6 @@ import com.example.fake_shop.repository.interfaces.IProductRepository
 
 class DislikeProductsUseCase(private val repository: IProductRepository): IDislikeProductsUseCase {
     override suspend fun invoke(): Boolean {
-        TODO("Not yet implemented")
+        return repository.dislikeProducts()
     }
 }
