@@ -10,4 +10,5 @@
     <string name="no_data">No Data</string>
     <string name="name_title">Name:</string>
     <string name="price_title">Price:</string>
+    <string name="update">update</string>
 </resources>

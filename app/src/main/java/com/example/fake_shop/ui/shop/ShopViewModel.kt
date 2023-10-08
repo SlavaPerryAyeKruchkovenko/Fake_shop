@@ -9,7 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class ShopViewModel(): ViewModel() {
+class ShopViewModel: ViewModel() {
     val liveData = MutableLiveData<OutputOf<List<Product>>>()
     private var liveDataCopy: List<Product> = listOf()
     fun init() {

@@ -36,6 +36,7 @@ class ShopFragment : Fragment(), ProductListener {
     private fun init() {
         initProductsRecycle()
         initSearchBar()
+        initUpdateButton()
     }
 
     private fun initProductsRecycle() {
@@ -86,7 +87,11 @@ class ShopFragment : Fragment(), ProductListener {
             }
         })
     }
-
+    private fun initUpdateButton(){
+        this.binding.updateBtn.setOnClickListener{
+            this.viewModel.updateProducts()
+        }
+    }
     override fun onClick(product: Product) {
         val bundle = Bundle()
         /*bundle.apply {
