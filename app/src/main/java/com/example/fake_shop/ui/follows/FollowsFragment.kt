@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.fake_shop.adapters.FollowAdapter
 import com.example.fake_shop.data.models.Product
@@ -30,8 +31,15 @@ class FollowsFragment : Fragment(), FollowListener {
     }
 
     private fun init() {
+        initAppbar()
         initFollowRecycle()
         initClearButton()
+    }
+
+    private fun initAppbar() {
+        binding.toolBar.setNavigationOnClickListener {
+            findNavController().popBackStack()
+        }
     }
 
     private fun initFollowRecycle() {
@@ -41,6 +49,11 @@ class FollowsFragment : Fragment(), FollowListener {
         )
         binding.follows.adapter = followAdapter
         val observer = Observer<List<Product>> { newValue ->
+            binding.clear.visibility = if (newValue.isNotEmpty()) {
+                View.VISIBLE
+            } else {
+                View.GONE
+            }
             followAdapter.submitList(newValue)
         }
         viewModel.liveData.observe(viewLifecycleOwner, observer)

@@ -90,7 +90,7 @@ class ProductRepository(
                 null
             }
         } catch (e: Exception) {
-            Log.e("update artifact error", e.toString())
+            Log.e("update product error", e.toString())
             null
         }
     }
@@ -101,7 +101,7 @@ class ProductRepository(
                 ProductConverter.fromProductEntity(it)
             } ?: listOf()
         } catch (e: Exception) {
-            Log.e("liked artifacts error", e.toString())
+            Log.e("liked products error", e.toString())
             listOf()
         }
     }
@@ -111,7 +111,7 @@ class ProductRepository(
             local.dislikeProducts()
             true
         } catch (e: Exception) {
-            Log.e("dislike artifacts error", e.toString())
+            Log.e("dislike products error", e.toString())
             false
         }
     }

@@ -51,6 +51,9 @@ class ProductConverter(
         )
     }
 
+    override fun toString(): String {
+        return "id: $id, title: $title, isLike: $isLike"
+    }
     companion object {
         fun fromProductResponse(res: ProductResponse): ProductConverter {
             return ProductConverter(

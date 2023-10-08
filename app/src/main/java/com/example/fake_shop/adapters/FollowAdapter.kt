@@ -76,7 +76,7 @@ class FollowAdapter(private val listener: FollowListener) :
             oldItem: Product,
             newItem: Product
         ): Boolean {
-            return oldItem.id == newItem.id
+            return oldItem.id == newItem.id && oldItem.isLike == newItem.isLike
         }
 
         override fun areContentsTheSame(

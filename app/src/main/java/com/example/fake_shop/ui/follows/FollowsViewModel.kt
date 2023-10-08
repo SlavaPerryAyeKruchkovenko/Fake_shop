@@ -27,16 +27,16 @@ class FollowsViewModel(
         if (product.isLike) {
             viewModelScope.launch {
                 dislikeProduct(ProductConverter.fromProduct(product))
+                updateLiked()
             }
-            updateLiked()
         }
     }
 
     fun dislikeAllProduct() {
         viewModelScope.launch {
             dislikeProducts()
+            updateLiked()
         }
-        updateLiked()
     }
 
     private fun updateLiked() {
@@ -45,6 +45,7 @@ class FollowsViewModel(
                 val likedProducts = withContext(Dispatchers.IO) {
                     getLikedProducts()
                 }
+                Log.d("test",likedProducts.toString())
                 liveData.postValue(likedProducts.map {
                     it.toProduct()
                 })
