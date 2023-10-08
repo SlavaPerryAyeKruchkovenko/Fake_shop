@@ -1,19 +1,23 @@
 package com.example.fake_shop.ui.shop
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.fake_shop.R
 import com.example.fake_shop.adapters.ProductAdapter
 import com.example.fake_shop.data.models.OutputOf
 import com.example.fake_shop.data.models.Product
 import com.example.fake_shop.databinding.FragmentShopBinding
 import com.example.fake_shop.listeners.ProductListener
 import org.koin.androidx.viewmodel.ext.android.getViewModel
+import com.google.android.material.snackbar.Snackbar
 
 class ShopFragment : Fragment(), ProductListener {
     private var _binding: FragmentShopBinding? = null
@@ -50,29 +54,56 @@ class ShopFragment : Fragment(), ProductListener {
                 is OutputOf.Success -> {
                     binding.characters.visibility = View.VISIBLE
                     binding.loader.root.visibility = View.GONE
+                    binding.errorText.visibility = View.GONE
                     productAdapter.submitList(newValue.value)
                 }
                 is OutputOf.Error.NotFoundError -> {
                     binding.characters.visibility = View.GONE
                     binding.loader.root.visibility = View.GONE
+                    binding.errorText.visibility = View.VISIBLE
+                }
+                is OutputOf.Error.InternetError -> {
+                    binding.characters.visibility = View.VISIBLE
+                    binding.loader.root.visibility = View.GONE
+                    binding.errorText.visibility = View.GONE
+                    productAdapter.submitList(newValue.value)
+                    viewShackBar(newValue.message)
+                }
+                is OutputOf.Error.ResponseError -> {
+                    binding.characters.visibility = View.VISIBLE
+                    binding.loader.root.visibility = View.GONE
+                    binding.errorText.visibility = View.GONE
+                    productAdapter.submitList(newValue.value)
+                    viewShackBar(newValue.message)
                 }
                 is OutputOf.Error -> {
                     binding.characters.visibility = View.GONE
                     binding.loader.root.visibility = View.GONE
+                    binding.errorText.visibility = View.VISIBLE
+                    binding.errorText.text = newValue.message
                 }
                 is OutputOf.Loader -> {
                     binding.characters.visibility = View.GONE
                     binding.loader.root.visibility = View.VISIBLE
+                    binding.errorText.visibility = View.GONE
                 }
                 else -> {
                     binding.characters.visibility = View.GONE
                     binding.loader.root.visibility = View.GONE
+                    binding.errorText.visibility = View.GONE
+                    viewShackBar("unchecked Error")
                 }
             }
         }
         viewModel.liveData.observe(viewLifecycleOwner, observer)
     }
-
+    private fun viewShackBar(text:String){
+        val snackbar = Snackbar.make(binding.root, text,
+            Snackbar.LENGTH_LONG)
+        snackbar.setBackgroundTint(ContextCompat.getColor(requireContext(),R.color.gray_200))
+        snackbar.setTextColor(ContextCompat.getColor(requireContext(),R.color.black))
+        snackbar.show()
+    }
     private fun initSearchBar() {
         this.searchView?.setOnQueryTextListener(object :
             SearchView.OnQueryTextListener {
