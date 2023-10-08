@@ -18,4 +18,9 @@
         android:name="com.example.fake_shop.ui.product.ProductFragment"
         android:label="fragment_product"
         tools:layout="@layout/fragment_product" />
+    <fragment
+        android:id="@+id/navigation_follows"
+        android:name="com.example.fake_shop.ui.follows.FollowsFragment"
+        android:label="fragment_follows"
+        tools:layout="@layout/fragment_follows" />
 </navigation>
