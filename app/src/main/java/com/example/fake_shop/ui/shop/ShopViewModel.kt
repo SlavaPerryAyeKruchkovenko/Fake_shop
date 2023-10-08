@@ -57,7 +57,6 @@ class ShopViewModel(
         }
     }
     fun filterProductsByTitle(query: String) {
-        liveData.postValue(OutputOf.Loader())
         val result = products.filter { x -> x.title.lowercase().startsWith(query.lowercase()) }
         liveData.postValue(
             if (result.isNotEmpty())
