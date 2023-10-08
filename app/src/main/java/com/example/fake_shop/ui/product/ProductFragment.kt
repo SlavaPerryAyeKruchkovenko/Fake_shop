@@ -87,17 +87,13 @@ class ProductFragment : Fragment() {
                     initProductView(newValue.value)
                     viewShackBar(newValue.message)
                 }
-                is OutputOf.Error.ResponseError -> {
-                    binding.product.visibility = View.VISIBLE
-                    binding.loader.root.visibility = View.GONE
-                    initProductView(newValue.value)
-                    viewShackBar(newValue.message)
-                }
                 is OutputOf.Loader -> {
                     binding.product.visibility = View.GONE
                     binding.loader.root.visibility = View.VISIBLE
                 }
                 else -> {
+                    binding.product.visibility = View.GONE
+                    binding.loader.root.visibility = View.GONE
                     viewShackBar("Unchecked Error")
                 }
             }

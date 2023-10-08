@@ -39,10 +39,10 @@ class ProductViewModel(
                         if (productResult.value != null) {
                             val product = productResult.value.toProduct()
                             isLikedLiveData.postValue(product.isLike)
-                            OutputOf.Error.ResponseError(product)
+                            OutputOf.Success(product)
                         }
                         else{
-                            OutputOf.Error.ResponseError(null)
+                            OutputOf.Success(null)
                         }
                     }
                     is OutputOf.Error.InternetError -> {
