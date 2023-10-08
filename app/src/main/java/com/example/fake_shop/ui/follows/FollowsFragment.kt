@@ -1,6 +1,7 @@
 package com.example.fake_shop.ui.follows
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -49,10 +50,12 @@ class FollowsFragment : Fragment(), FollowListener {
         )
         binding.follows.adapter = followAdapter
         val observer = Observer<List<Product>> { newValue ->
-            binding.clear.visibility = if (newValue.isNotEmpty()) {
-                View.VISIBLE
+            if (newValue.isNotEmpty()) {
+                binding.emptyText.visibility = View.GONE
+                binding.followBlock.visibility = View.VISIBLE
             } else {
-                View.GONE
+                binding.emptyText.visibility = View.VISIBLE
+                binding.followBlock.visibility = View.GONE
             }
             followAdapter.submitList(newValue)
         }

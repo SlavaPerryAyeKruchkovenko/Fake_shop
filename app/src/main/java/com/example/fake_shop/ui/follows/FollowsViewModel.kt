@@ -45,7 +45,6 @@ class FollowsViewModel(
                 val likedProducts = withContext(Dispatchers.IO) {
                     getLikedProducts()
                 }
-                Log.d("test",likedProducts.toString())
                 liveData.postValue(likedProducts.map {
                     it.toProduct()
                 })
