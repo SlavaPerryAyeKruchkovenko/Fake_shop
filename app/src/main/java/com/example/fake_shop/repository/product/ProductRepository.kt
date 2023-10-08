@@ -1,12 +1,15 @@
 package com.example.fake_shop.repository.product
 
+import android.util.Log
 import com.example.fake_shop.data.converters.ProductConverter
 import com.example.fake_shop.data.models.OutputOf
+import com.example.fake_shop.database.repositories.IProductLocalRepository
 import com.example.fake_shop.networks.repositories.IProductNetworkRepository
 import com.example.fake_shop.repository.interfaces.IProductRepository
 import java.net.UnknownHostException
 
 class ProductRepository(
+    private val local: IProductLocalRepository,
     private val network: IProductNetworkRepository
 ) :IProductRepository {
     override suspend fun getProducts(): OutputOf<List<ProductConverter>> {
@@ -15,21 +18,26 @@ class ProductRepository(
             if (res.isSuccessful) {
                 val productsResponse = res.body()!!
                 val products = productsResponse.map {
-                    ProductConverter.fromArtifactResponse(it)
+                    ProductConverter.fromProductResponse(it)
                 }
-                /*val productsEntity = products.map {
-                    it.toArtifactEntity()
+                val productEntities = products.map {
+                    it.toProductEntity()
                 }
-                local.addArtifacts(artifactsEntity)*/
-                OutputOf.Success(products)
+                local.addProducts(productEntities)
+                OutputOf.Success(productEntities.map {
+                    ProductConverter.fromProductEntity(it)
+                })
             } else {
-                OutputOf.Error.ResponseError(listOf())
+                val products = local.getProducts()?.map {
+                    ProductConverter.fromProductEntity(it)
+                } ?: listOf()
+                OutputOf.Error.ResponseError(products)
             }
         } catch (e: UnknownHostException) {
-            OutputOf.Error.InternetError(listOf())
-            /*local.getArtifacts()?.map {
-                ArtifactConvert.fromArtifactEntity(it)
-            } ?: listOf()*/
+            val products = local.getProducts()?.map {
+                ProductConverter.fromProductEntity(it)
+            } ?: listOf()
+            OutputOf.Error.InternetError(products)
         }
     }
 
@@ -38,25 +46,67 @@ class ProductRepository(
             val res = network.getProduct(id)
             if (res.isSuccessful) {
                 val productResponse = res.body()!!
-                val product = ProductConverter.fromArtifactResponse(productResponse)
+                val product = ProductConverter.fromProductResponse(productResponse)
+                local.updateProduct(product.toProductEntity())
                 OutputOf.Success(product)
             } else {
-                OutputOf.Error.ResponseError(null)
+                val entity = local.getProduct(id)
+                val product = if (entity != null) {
+                    ProductConverter.fromProductEntity(entity)
+                } else {
+                    null
+                }
+                OutputOf.Error.ResponseError(product)
             }
         } catch (e: UnknownHostException) {
-            OutputOf.Error.InternetError(null)
+            val entity = local.getProduct(id)
+            val product = if (entity != null) {
+                ProductConverter.fromProductEntity(entity)
+            } else {
+                null
+            }
+            OutputOf.Error.InternetError(product)
         }
     }
 
-    override suspend fun updateProduct(product: ProductConverter): ProductConverter {
-        TODO("Not yet implemented")
+    override suspend fun updateProduct(product: ProductConverter): ProductConverter? {
+        return try {
+            val productEntity = local.getProduct(product.id)
+            if (productEntity != null) {
+                productEntity.isLike = if (product.isLike) {
+                    1
+                } else {
+                    0
+                }
+                local.updateProduct(productEntity)
+                ProductConverter.fromProductEntity(productEntity)
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            Log.e("update artifact error", e.toString())
+            null
+        }
     }
 
     override suspend fun getLikedProducts(): List<ProductConverter> {
-        TODO("Not yet implemented")
+        return try {
+            local.getLikedProducts()?.map {
+                ProductConverter.fromProductEntity(it)
+            } ?: listOf()
+        } catch (e: Exception) {
+            Log.e("liked artifacts error", e.toString())
+            listOf()
+        }
     }
 
     override suspend fun dislikeProducts(): Boolean {
-        TODO("Not yet implemented")
+        return try {
+            local.dislikeProducts()
+            true
+        } catch (e: Exception) {
+            Log.e("dislike artifacts error", e.toString())
+            false
+        }
     }
 }

@@ -26,6 +26,7 @@ interface ProductDao {
         products.forEach { product ->
             val dbArtifact = dbArtifacts.find { it.id == product.id }
             product.isLike = dbArtifact?.isLike ?: 0
+            product.comment = dbArtifact?.comment
         }
         deleteProducts()
         insertArtifacts(products)

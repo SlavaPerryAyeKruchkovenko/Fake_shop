@@ -6,6 +6,6 @@ import org.koin.dsl.module
 
 val unitedDataModule = module {
     single<IProductRepository> {
-        ProductRepository(network = get())
+        ProductRepository(local = get(), network = get())
     }
 }

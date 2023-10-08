@@ -8,6 +8,7 @@ import org.koin.core.module.Module
 
 val appModules: List<Module> = listOf(
     retrofitModule,
+    dataBaseModule,
     localDataModule,
     networkDataModule,
     unitedDataModule,

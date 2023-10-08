@@ -9,5 +9,6 @@ data class Product(
     val image: String,
     val count: Int,
     val rating: Double,
-    val isLike: Boolean
+    val isLike: Boolean,
+    val comment: String?
 )
