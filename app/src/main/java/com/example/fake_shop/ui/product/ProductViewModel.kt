@@ -1,6 +1,5 @@
 package com.example.fake_shop.ui.product
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -21,6 +20,7 @@ class ProductViewModel(
 ) : ViewModel() {
     val productLiveData = MutableLiveData<OutputOf<Product?>>()
     val isLikedLiveData = MutableLiveData(false)
+
     fun init(productId: String) {
         productLiveData.postValue(OutputOf.Loader())
         viewModelScope.launch {
@@ -43,7 +43,7 @@ class ProductViewModel(
                             OutputOf.Success(product)
                         }
                         else{
-                            OutputOf.Success(null)
+                            OutputOf.Error.NotFoundError()
                         }
                     }
                     is OutputOf.Error.InternetError -> {
@@ -51,33 +51,29 @@ class ProductViewModel(
                             val product = productResult.value.toProduct()
                             isLikedLiveData.postValue(product.isLike)
                             OutputOf.Error.InternetError(product)
-                        }
-                        else{
+                        } else {
                             OutputOf.Error.InternetError(null)
                         }
                     }
-                    else -> OutputOf.Error.NotFoundError()
-                })
+                    else -> {
+                        OutputOf.Error.NotFoundError()
+                    }
+                }
+            )
+        }
+    }
+
+    fun getCurProduct(): Product? {
+        return when (val liveData = productLiveData.value) {
+            is OutputOf.Success -> liveData.value
+            is OutputOf.Error.InternetError -> liveData.value
+            else -> null
         }
     }
 
     fun changeLike() {
         viewModelScope.launch {
-            when (val output = productLiveData.value) {
-                is OutputOf.Success -> {
-                    if (output.value != null) {
-                        updateProduct(output.value)
-                    }
-                }
-                is OutputOf.Error.InternetError -> {
-                    if (output.value != null) {
-                        updateProduct(output.value)
-                    }
-                }
-                else -> {
-                    Log.e("error", "Incorrect result")
-                }
-            }
+            getCurProduct()?.let { updateProduct(it) }
         }
     }
 

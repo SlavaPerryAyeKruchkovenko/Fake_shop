@@ -1,40 +1,75 @@
 package com.example.fake_shop.ui.product
 
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.fake_shop.R
 import com.example.fake_shop.data.models.OutputOf
 import com.example.fake_shop.data.models.Product
 import com.example.fake_shop.databinding.FragmentProductBinding
 import com.example.fake_shop.ui.NavigationBarHelper
+import com.example.fake_shop.utils.getImageFromUrl
+import com.example.fake_shop.utils.savePhotoToExternalStorage
 import com.google.android.material.snackbar.Snackbar
 import com.squareup.picasso.Picasso
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.getViewModel
+
 
 class ProductFragment : Fragment() {
     private var _binding: FragmentProductBinding? = null
     private val binding get() = _binding!!
     private val viewModel by lazy { getViewModel<ProductViewModel>() }
+    private lateinit var requestWriteExternalStorage: ActivityResultLauncher<String>
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentProductBinding.inflate(inflater, container, false)
+        initRequestPermissions()
         init()
+        initArguments()
+        return binding.root
+    }
+
+    private fun initArguments() {
         if (arguments != null) {
             val id = this.arguments?.getString("product_id")
             if (id != null) {
                 viewModel.init(id)
             }
         }
-        return binding.root
+    }
+
+    private fun initRequestPermissions() {
+        requestWriteExternalStorage = registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted ->
+            if (isGranted) {
+                val product = viewModel.getCurProduct()
+                val context = requireContext()
+                if (product != null) {
+                    downloadProductImage(context, product)
+                } else {
+                    viewShackBar("product not found")
+                }
+            } else {
+                viewShackBar("permissions not granted")
+            }
+        }
     }
 
     private fun init() {
@@ -56,7 +91,7 @@ class ProductFragment : Fragment() {
                     true
                 }
                 R.id.notify -> {
-                    viewShackBar("функция уведомления еще не реализована")
+                    viewShackBar("notify function isn't allow")
                     true
                 }
                 else -> false
@@ -122,13 +157,27 @@ class ProductFragment : Fragment() {
 
     private fun initDownloadBtn() {
         binding.download.setOnClickListener {
-            viewShackBar("Функция скачивания еще не реализована")
+            val product = viewModel.getCurProduct()
+            val context = requireContext()
+
+            val minSdk29 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+            val hasWritePermission = ContextCompat.checkSelfPermission(
+                context, Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED || minSdk29
+
+            if (product != null) {
+                val permission = Manifest.permission.WRITE_EXTERNAL_STORAGE
+                if (!hasWritePermission) {
+                    requestWriteExternalStorage.launch(permission)
+                } else {
+                    downloadProductImage(context, product)
+                }
+            }
         }
     }
-
     private fun initShareBtn() {
         binding.share.setOnClickListener {
-            viewShackBar("Функция поделиться еще не доступна")
+            viewShackBar("Shared function is not allowed")
         }
     }
 
@@ -140,6 +189,21 @@ class ProductFragment : Fragment() {
         snackbar.setBackgroundTint(ContextCompat.getColor(requireContext(), R.color.gray_200))
         snackbar.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
         snackbar.show()
+    }
+
+    private fun downloadProductImage(context: Context, product: Product) {
+        lifecycleScope.launch{
+            val image = getImageFromUrl(product.image)
+            if (image != null) {
+                val isSave = savePhotoToExternalStorage(context, "product", image)
+                if (isSave) {
+                    viewShackBar("Success")
+                } else {
+                    viewShackBar("Image not save")
+                }
+            }
+            viewShackBar("Image not download")
+        }
     }
 
     override fun onDestroy() {
