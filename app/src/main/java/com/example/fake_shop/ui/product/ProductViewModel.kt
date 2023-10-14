@@ -1,5 +1,6 @@
 package com.example.fake_shop.ui.product
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -62,26 +63,38 @@ class ProductViewModel(
 
     fun changeLike() {
         viewModelScope.launch {
-            if (productLiveData.value is OutputOf.Success || productLiveData.value is OutputOf.Error.InternetError) {
-                val product = (productLiveData.value as OutputOf.Success<Product?>).value
-                if (product != null) {
-                    val productConvert = withContext(Dispatchers.IO) {
-                        if (product.isLike) {
-                            dislikeProduct(ProductConverter.fromProduct(product))
-                        } else {
-                            likeProduct(ProductConverter.fromProduct(product))
-                        }
+            when (val output = productLiveData.value) {
+                is OutputOf.Success -> {
+                    if (output.value != null) {
+                        updateProduct(output.value)
                     }
-                    if (productConvert != null) {
-                        val newProduct = productConvert.toProduct()
-                        isLikedLiveData.postValue(newProduct.isLike)
-                        productLiveData.postValue(OutputOf.Success(newProduct))
-                    } else {
-                        productLiveData.postValue(OutputOf.Error.NotFoundError())
+                }
+                is OutputOf.Error.InternetError -> {
+                    if (output.value != null) {
+                        updateProduct(output.value)
                     }
-
+                }
+                else -> {
+                    Log.e("error", "Incorrect result")
                 }
             }
+        }
+    }
+
+    private suspend fun updateProduct(product: Product) {
+        val productConvert = withContext(Dispatchers.IO) {
+            if (product.isLike) {
+                dislikeProduct(ProductConverter.fromProduct(product))
+            } else {
+                likeProduct(ProductConverter.fromProduct(product))
+            }
+        }
+        if (productConvert != null) {
+            val newProduct = productConvert.toProduct()
+            isLikedLiveData.postValue(newProduct.isLike)
+            productLiveData.postValue(OutputOf.Success(newProduct))
+        } else {
+            productLiveData.postValue(OutputOf.Error.NotFoundError())
         }
     }
 }
