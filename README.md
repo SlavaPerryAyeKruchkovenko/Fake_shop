@@ -7,7 +7,8 @@
 </br></br>
 Приложение может работать без интернета, однако если вы недалали никаких запросов с интернетом, то и без интернета данные не появяться
 </br></br>
-
+Для того чтобы уведомления работали нужно использовать SDK версии 24 или выше
+</br></br>
 [telegram](https://t.me/SlavaKruchkovenko)
 
 [Скачать APK](https://github.com/SlavaPerryAyeKruchkovenko/Fake_shop/releases/download/kotlin/app-debug.apk)
