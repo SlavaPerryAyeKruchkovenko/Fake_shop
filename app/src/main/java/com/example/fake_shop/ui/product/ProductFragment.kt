@@ -1,12 +1,10 @@
 package com.example.fake_shop.ui.product
 
 import android.Manifest
-import android.app.Dialog
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -20,14 +18,17 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.fake_shop.R
+import com.example.fake_shop.data.NotifyDelay
 import com.example.fake_shop.data.models.OutputOf
 import com.example.fake_shop.data.models.Product
 import com.example.fake_shop.databinding.DialogNotifyCreaterBinding
 import com.example.fake_shop.databinding.FragmentProductBinding
 import com.example.fake_shop.ui.NavigationBarHelper
+import com.example.fake_shop.utils.DialogUtils.createNotifyDialog
 import com.example.fake_shop.utils.DialogUtils.viewShackBar
 import com.example.fake_shop.utils.ImageUtils.getImageFromUrl
 import com.example.fake_shop.utils.ImageUtils.getImageToShare
+import com.example.fake_shop.utils.NotifyUtils.getDelayByRadioBtn
 import com.example.fake_shop.utils.ProductUtils
 import com.example.fake_shop.utils.ProductUtils.loadImageToImageView
 import kotlinx.coroutines.launch
@@ -96,7 +97,7 @@ class ProductFragment : Fragment() {
                     true
                 }
                 R.id.notify -> {
-                    showDialog()
+                    createNotify()
                     true
                 }
                 else -> false
@@ -185,15 +186,23 @@ class ProductFragment : Fragment() {
         }
     }
 
-    private fun showDialog() {
+    private fun createNotify() {
         val context = requireContext()
         val dialogBinding = DialogNotifyCreaterBinding.inflate(LayoutInflater.from(context))
-        val myDialog = Dialog(context).apply {
-            setContentView(dialogBinding.root)
-            setCancelable(true)
-            window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        val dialog = createNotifyDialog(context, dialogBinding)
+
+        dialogBinding.cancel.setOnClickListener {
+            dialog.dismiss()
         }
-        myDialog.show()
+        dialogBinding.accept.setOnClickListener {
+            val notifyDelay = getDelayByRadioBtn(dialogBinding.timeGroup.checkedRadioButtonId)
+            if (notifyDelay == NotifyDelay.None) {
+                viewShackBar(context, binding.root, "Select delay")
+            } else {
+                val a =
+                    context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            }
+        }
     }
 
     private fun shareProduct(product: Product) {

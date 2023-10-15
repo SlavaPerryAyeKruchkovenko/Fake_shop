@@ -16,4 +16,10 @@ class FakeShopApp: Application() {
             modules(appModules)
         }
     }
+
+    companion object {
+        const val APP_ID = 2794
+        const val NOTIFY_CHANEL_ID = "2641f192-160a-4926-b7b8-b35ba37915d9"
+        const val NOTIFY_CHANEL_NAME = "fake_app_notify_chanel"
+    }
 }
