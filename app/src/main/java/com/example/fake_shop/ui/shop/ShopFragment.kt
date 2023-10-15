@@ -16,6 +16,7 @@ import com.example.fake_shop.data.models.OutputOf
 import com.example.fake_shop.data.models.Product
 import com.example.fake_shop.databinding.FragmentShopBinding
 import com.example.fake_shop.listeners.ProductListener
+import com.example.fake_shop.utils.DialogUtils.viewShackBar
 import com.google.android.material.snackbar.Snackbar
 import org.koin.androidx.viewmodel.ext.android.getViewModel
 
@@ -49,6 +50,7 @@ class ShopFragment : Fragment(), ProductListener {
             LinearLayoutManager.VERTICAL, false
         )
         binding.characters.adapter = productAdapter
+        val context = requireContext()
         val observer = Observer<OutputOf<List<Product>>> { newValue ->
             when (newValue) {
                 is OutputOf.Success -> {
@@ -67,14 +69,14 @@ class ShopFragment : Fragment(), ProductListener {
                     binding.loader.root.visibility = View.GONE
                     binding.errorText.visibility = View.GONE
                     productAdapter.submitList(newValue.value)
-                    viewShackBar(newValue.message)
+                    viewShackBar(context,binding.root,newValue.message)
                 }
                 is OutputOf.Error.ResponseError -> {
                     binding.characters.visibility = View.VISIBLE
                     binding.loader.root.visibility = View.GONE
                     binding.errorText.visibility = View.GONE
                     productAdapter.submitList(newValue.value)
-                    viewShackBar(newValue.message)
+                    viewShackBar(context,binding.root,newValue.message)
                 }
                 is OutputOf.Error -> {
                     binding.characters.visibility = View.GONE
@@ -91,19 +93,13 @@ class ShopFragment : Fragment(), ProductListener {
                     binding.characters.visibility = View.GONE
                     binding.loader.root.visibility = View.GONE
                     binding.errorText.visibility = View.GONE
-                    viewShackBar("unchecked Error")
+                    viewShackBar(context,binding.root,"Unchecked Error")
                 }
             }
         }
         viewModel.liveData.observe(viewLifecycleOwner, observer)
     }
-    private fun viewShackBar(text:String){
-        val snackbar = Snackbar.make(binding.root, text,
-            Snackbar.LENGTH_LONG)
-        snackbar.setBackgroundTint(ContextCompat.getColor(requireContext(),R.color.gray_200))
-        snackbar.setTextColor(ContextCompat.getColor(requireContext(),R.color.black))
-        snackbar.show()
-    }
+
     private fun initSearchBar() {
         this.searchView?.setOnQueryTextListener(object :
             SearchView.OnQueryTextListener {

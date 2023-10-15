@@ -14,4 +14,5 @@
     <color name="red">#ffff0000</color>
     <color name="blue">#ff00ffff</color>
     <color name="blue_300">#5500d6ff</color>
+    <color name="success">#33FF33</color>
 </resources>

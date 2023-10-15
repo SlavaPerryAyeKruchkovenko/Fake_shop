@@ -1,12 +1,14 @@
 package com.example.fake_shop.ui.product
 
 import android.Manifest
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,13 +22,14 @@ import androidx.navigation.fragment.findNavController
 import com.example.fake_shop.R
 import com.example.fake_shop.data.models.OutputOf
 import com.example.fake_shop.data.models.Product
+import com.example.fake_shop.databinding.DialogNotifyCreaterBinding
 import com.example.fake_shop.databinding.FragmentProductBinding
 import com.example.fake_shop.ui.NavigationBarHelper
+import com.example.fake_shop.utils.DialogUtils.viewShackBar
 import com.example.fake_shop.utils.ImageUtils.getImageFromUrl
 import com.example.fake_shop.utils.ImageUtils.getImageToShare
 import com.example.fake_shop.utils.ProductUtils
-import com.google.android.material.snackbar.Snackbar
-import com.squareup.picasso.Picasso
+import com.example.fake_shop.utils.ProductUtils.loadImageToImageView
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.getViewModel
 
@@ -60,16 +63,16 @@ class ProductFragment : Fragment() {
         requestWriteExternalStorage = registerForActivityResult(
             ActivityResultContracts.RequestPermission()
         ) { isGranted ->
+            val context = requireContext()
             if (isGranted) {
                 val product = viewModel.getCurProduct()
-                val context = requireContext()
                 if (product != null) {
                     downloadProductImage(context, product)
                 } else {
-                    viewShackBar("product not found")
+                    viewShackBar(context, binding.root, "product not found")
                 }
             } else {
-                viewShackBar("permissions not granted")
+                viewShackBar(context, binding.root, "permissions not granted")
             }
         }
     }
@@ -93,7 +96,7 @@ class ProductFragment : Fragment() {
                     true
                 }
                 R.id.notify -> {
-                    viewShackBar("notify function isn't allow")
+                    showDialog()
                     true
                 }
                 else -> false
@@ -112,6 +115,7 @@ class ProductFragment : Fragment() {
 
     private fun initProduct() {
         val productObserver = Observer<OutputOf<Product?>> { newValue ->
+            val context = requireContext()
             when (newValue) {
                 is OutputOf.Success -> {
                     binding.product.visibility = View.VISIBLE
@@ -122,7 +126,7 @@ class ProductFragment : Fragment() {
                     binding.product.visibility = View.VISIBLE
                     binding.loader.root.visibility = View.GONE
                     initProductView(newValue.value)
-                    viewShackBar(newValue.message)
+                    viewShackBar(context, binding.root, newValue.message)
                 }
                 is OutputOf.Loader -> {
                     binding.product.visibility = View.GONE
@@ -131,7 +135,7 @@ class ProductFragment : Fragment() {
                 else -> {
                     binding.product.visibility = View.GONE
                     binding.loader.root.visibility = View.GONE
-                    viewShackBar("Unchecked Error")
+                    viewShackBar(context, binding.root, "Unchecked Error")
                 }
             }
         }
@@ -145,15 +149,7 @@ class ProductFragment : Fragment() {
             binding.category.text = product.category
             binding.rating.text = product.rating.toString()
             binding.count.text = product.count.toString()
-            try {
-                Picasso.get().load(product.image)
-                    .placeholder(R.drawable.loading_animation)
-                    .error(R.drawable.broken_image)
-                    .into(binding.image)
-            } catch (ex: Exception) {
-                Log.e("Error", ex.message.toString())
-                ex.printStackTrace()
-            }
+            loadImageToImageView(product.image, binding.image)
         }
     }
 
@@ -183,10 +179,21 @@ class ProductFragment : Fragment() {
             if (product != null) {
                 shareProduct(product)
             } else {
-                viewShackBar("Product not found")
+                viewShackBar(requireContext(), binding.root, "Product not found")
             }
 
         }
+    }
+
+    private fun showDialog() {
+        val context = requireContext()
+        val dialogBinding = DialogNotifyCreaterBinding.inflate(LayoutInflater.from(context))
+        val myDialog = Dialog(context).apply {
+            setContentView(dialogBinding.root)
+            setCancelable(true)
+            window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        }
+        myDialog.show()
     }
 
     private fun shareProduct(product: Product) {
@@ -204,7 +211,7 @@ class ProductFragment : Fragment() {
                     startActivity(Intent.createChooser(intent, "Share Product"))
                 }
             } else {
-                viewShackBar("Image not loaded")
+                viewShackBar(requireContext(), binding.root, "Image not loaded")
             }
         }
     }
@@ -213,20 +220,11 @@ class ProductFragment : Fragment() {
         lifecycleScope.launch {
             val isSuccess = ProductUtils.downloadImage(context, product)
             if (isSuccess) {
-                viewShackBar("Success")
+                viewShackBar(context, binding.root, "Success", false)
             } else {
-                viewShackBar("Image not download")
+                viewShackBar(context, binding.root, "Image not download")
             }
         }
-    }
-
-    private fun viewShackBar(text: String) {
-        val snackbar = Snackbar.make(
-            binding.root, text, Snackbar.LENGTH_LONG
-        )
-        snackbar.setBackgroundTint(ContextCompat.getColor(requireContext(), R.color.gray_200))
-        snackbar.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
-        snackbar.show()
     }
 
     override fun onDestroy() {
