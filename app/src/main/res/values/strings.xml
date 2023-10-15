@@ -27,4 +27,6 @@
     <string name="notify_time">Select notify time</string>
     <string name="cancel">Cancel</string>
     <string name="accept">Accept</string>
+    <string name="are_you_sure">Are you sure?</string>
+    <string name="clear_follows">Clean up favorites?</string>
 </resources>

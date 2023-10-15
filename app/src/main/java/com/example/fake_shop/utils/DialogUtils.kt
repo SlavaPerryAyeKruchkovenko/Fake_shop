@@ -7,6 +7,7 @@ import android.graphics.drawable.ColorDrawable
 import android.view.View
 import androidx.core.content.ContextCompat
 import com.example.fake_shop.R
+import com.example.fake_shop.databinding.DialogAcceptBinding
 import com.example.fake_shop.databinding.DialogNotifyCreaterBinding
 import com.google.android.material.snackbar.Snackbar
 
@@ -38,6 +39,16 @@ object DialogUtils {
     }
 
     fun createNotifyDialog(context: Context, binding: DialogNotifyCreaterBinding): Dialog {
+        val myDialog = Dialog(context).apply {
+            setContentView(binding.root)
+            setCancelable(true)
+            window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        }
+        myDialog.show()
+        return myDialog
+    }
+
+    fun createCrudDialog(context: Context, binding: DialogAcceptBinding): Dialog {
         val myDialog = Dialog(context).apply {
             setContentView(binding.root)
             setCancelable(true)

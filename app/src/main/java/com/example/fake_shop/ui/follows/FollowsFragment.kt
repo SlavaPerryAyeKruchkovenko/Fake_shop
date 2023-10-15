@@ -1,7 +1,6 @@
 package com.example.fake_shop.ui.follows
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,10 +8,13 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.fake_shop.R
 import com.example.fake_shop.adapters.FollowAdapter
 import com.example.fake_shop.data.models.Product
+import com.example.fake_shop.databinding.DialogAcceptBinding
 import com.example.fake_shop.databinding.FragmentFollowsBinding
 import com.example.fake_shop.listeners.FollowListener
+import com.example.fake_shop.utils.DialogUtils
 import org.koin.androidx.viewmodel.ext.android.getViewModel
 
 class FollowsFragment : Fragment(), FollowListener {
@@ -63,8 +65,18 @@ class FollowsFragment : Fragment(), FollowListener {
     }
 
     private fun initClearButton() {
+        val context = requireContext()
         binding.clear.setOnClickListener {
-            viewModel.dislikeAllProduct()
+            val dialogBinding = DialogAcceptBinding.inflate(LayoutInflater.from(context))
+            val dialog = DialogUtils.createCrudDialog(context, dialogBinding)
+            dialogBinding.title.text = getString(R.string.clear_follows)
+            dialogBinding.cancel.setOnClickListener {
+                dialog.dismiss()
+            }
+            dialogBinding.accept.setOnClickListener {
+                viewModel.dislikeAllProduct()
+                dialog.dismiss()
+            }
         }
     }
 
