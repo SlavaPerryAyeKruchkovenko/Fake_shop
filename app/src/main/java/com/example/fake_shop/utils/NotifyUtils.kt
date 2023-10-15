@@ -35,13 +35,17 @@ object NotifyUtils {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun createDefaultNotify(context: Context, manager: NotificationManager, delay: NotifyDelay) {
+    fun createDefaultNotify(
+        context: Context,
+        manager: NotificationManager,
+        delay: NotifyDelay
+    ): Boolean {
         val chanel = NotificationChannel(
             NOTIFY_CHANEL_ID,
             NOTIFY_CHANEL_NAME,
             NotificationManager.IMPORTANCE_DEFAULT
         )
-        try {
+        return try {
             manager.createNotificationChannel(chanel)
             val notification = Notification.Builder(context, NOTIFY_CHANEL_NAME).apply {
                 setContentTitle("Notify created")
@@ -50,10 +54,11 @@ object NotifyUtils {
 
             }.build()
             manager.notify(APP_ID, notification)
+            true
         } catch (e: Exception) {
             e.printStackTrace()
             Log.e("notify error", e.toString())
+            false
         }
-
     }
 }

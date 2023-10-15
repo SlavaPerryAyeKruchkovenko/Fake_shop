@@ -28,9 +28,11 @@ import com.example.fake_shop.utils.DialogUtils.createNotifyDialog
 import com.example.fake_shop.utils.DialogUtils.viewShackBar
 import com.example.fake_shop.utils.ImageUtils.getImageFromUrl
 import com.example.fake_shop.utils.ImageUtils.getImageToShare
+import com.example.fake_shop.utils.NotifyUtils.createDefaultNotify
 import com.example.fake_shop.utils.NotifyUtils.getDelayByRadioBtn
 import com.example.fake_shop.utils.ProductUtils
 import com.example.fake_shop.utils.ProductUtils.loadImageToImageView
+import com.example.fake_shop.utils.SDKCheckUtils.sdk24AndUp
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.getViewModel
 
@@ -199,8 +201,19 @@ class ProductFragment : Fragment() {
             if (notifyDelay == NotifyDelay.None) {
                 viewShackBar(context, binding.root, "Select delay")
             } else {
-                val a =
-                    context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                sdk24AndUp {
+                    val isSuccess = createDefaultNotify(
+                        context,
+                        context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager,
+                        notifyDelay
+                    )
+/*                    if (isSuccess) {
+
+                    }*/
+                    if (!isSuccess) {
+                        viewShackBar(context, binding.root, "Notify not created")
+                    }
+                }
             }
         }
     }

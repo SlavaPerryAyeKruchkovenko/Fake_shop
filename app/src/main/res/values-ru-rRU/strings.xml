@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="products">Продукты</string>
+    <string name="follows">Израбное</string>
+    <string name="follow">Нравиться</string>
+    <string name="shop">Магазин</string>
+    <string name="search">Поиск</string>
+    <string name="loader">Загрузка</string>
+    <string name="product">Продукт</string>
+    <string name="no_data">Нет данных</string>
+    <string name="name_title">Имя:</string>
+    <string name="price_title">Цена:</string>
+    <string name="update">обновить</string>
+    <string name="notify">уведомление</string>
+    <string name="share">Поделиться</string>
+    <string name="category_title">Категория:</string>
+    <string name="rating_title">Рэйтинг:</string>
+    <string name="count_title">Кол-во:</string>
+    <string name="download">Скачать</string>
+    <string name="clear">Отчистить</string>
+    <string name="empty_follows">Избраное пусто</string>
+    <string name="_15_minutes">15 минут</string>
+    <string name="_1_hour">1 час</string>
+    <string name="_1_day">1 день</string>
+    <string name="_7_days">7 дней</string>
+    <string name="notify_time">Выберите время уведомления</string>
+    <string name="cancel">Отмена</string>
+    <string name="accept">Принять</string>
+</resources>
