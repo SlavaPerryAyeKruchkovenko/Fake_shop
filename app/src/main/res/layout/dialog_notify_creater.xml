@@ -30,28 +30,28 @@
             app:layout_constraintTop_toBottomOf="@+id/title">
 
             <RadioButton
-                android:id="@+id/_15_minutes"
+                android:id="@+id/_Fifteen_minutes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/black"
                 android:text="@string/_15_minutes" />
 
             <RadioButton
-                android:id="@+id/_1_hour"
+                android:id="@+id/_One_hour"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/black"
                 android:text="@string/_1_hour" />
 
             <RadioButton
-                android:id="@+id/_1_day"
+                android:id="@+id/_One_day"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/black"
                 android:text="@string/_1_day" />
 
             <RadioButton
-                android:id="@+id/_7_days"
+                android:id="@+id/_Seven_days"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/black"
@@ -68,7 +68,7 @@
             app:layout_constraintTop_toBottomOf="@+id/timeGroup">
 
             <com.google.android.material.button.MaterialButton
-                android:layout_marginEnd="12dp"
+                android:layout_marginEnd="6dp"
                 android:id="@+id/cancel"
                 style="@style/BlackBtn"
                 android:layout_width="wrap_content"
@@ -80,7 +80,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <com.google.android.material.button.MaterialButton
-                android:layout_marginStart="12dp"
+                android:layout_marginStart="6dp"
                 android:id="@+id/accept"
                 style="@style/WhiteBtn"
                 android:layout_width="wrap_content"

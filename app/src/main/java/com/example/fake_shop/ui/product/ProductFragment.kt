@@ -33,6 +33,7 @@ import com.example.fake_shop.utils.NotifyUtils.getDelayByRadioBtn
 import com.example.fake_shop.utils.ProductUtils
 import com.example.fake_shop.utils.ProductUtils.loadImageToImageView
 import com.example.fake_shop.utils.SDKCheckUtils.sdk24AndUp
+import com.example.fake_shop.utils.SDKCheckUtils.sdk33AndUp
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.getViewModel
 
@@ -42,12 +43,14 @@ class ProductFragment : Fragment() {
     private val binding get() = _binding!!
     private val viewModel by lazy { getViewModel<ProductViewModel>() }
     private lateinit var requestWriteExternalStorage: ActivityResultLauncher<String>
+    private lateinit var requestAllowNotify: ActivityResultLauncher<String>
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentProductBinding.inflate(inflater, container, false)
         initRequestPermissions()
+        initNotifyPermissions()
         init()
         initArguments()
         return binding.root
@@ -74,6 +77,19 @@ class ProductFragment : Fragment() {
                 } else {
                     viewShackBar(context, binding.root, "product not found")
                 }
+            } else {
+                viewShackBar(context, binding.root, "permissions not granted")
+            }
+        }
+    }
+
+    private fun initNotifyPermissions() {
+        requestAllowNotify = registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted ->
+            val context = requireContext()
+            if (isGranted) {
+                viewShackBar(context, binding.root, "notification is allowed", false)
             } else {
                 viewShackBar(context, binding.root, "permissions not granted")
             }
@@ -190,34 +206,40 @@ class ProductFragment : Fragment() {
 
     private fun createNotify() {
         val context = requireContext()
-        val dialogBinding = DialogNotifyCreaterBinding.inflate(LayoutInflater.from(context))
-        val dialog = createNotifyDialog(context, dialogBinding)
+        val manager =
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        if (manager.areNotificationsEnabled()) {
+            val dialogBinding = DialogNotifyCreaterBinding.inflate(LayoutInflater.from(context))
+            val dialog = createNotifyDialog(context, dialogBinding)
 
-        dialogBinding.cancel.setOnClickListener {
-            dialog.dismiss()
-        }
-        dialogBinding.accept.setOnClickListener {
-            val notifyDelay = getDelayByRadioBtn(dialogBinding.timeGroup.checkedRadioButtonId)
-            if (notifyDelay == NotifyDelay.None) {
-                viewShackBar(context, binding.root, "Select delay")
-            } else {
-                sdk24AndUp {
-                    val isSuccess = createDefaultNotify(
-                        context,
-                        context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager,
-                        notifyDelay
-                    )
-/*                    if (isSuccess) {
-
-                    }*/
-                    if (!isSuccess) {
-                        viewShackBar(context, binding.root, "Notify not created")
+            dialogBinding.cancel.setOnClickListener {
+                dialog.dismiss()
+            }
+            dialogBinding.accept.setOnClickListener {
+                val notifyDelay = getDelayByRadioBtn(dialogBinding.timeGroup.checkedRadioButtonId)
+                if (notifyDelay == NotifyDelay.None) {
+                    viewShackBar(context, binding.root, "Select delay")
+                } else {
+                    sdk24AndUp {
+                        val isSuccess = createDefaultNotify(
+                            context,
+                            manager,
+                            notifyDelay
+                        )
+                        if (isSuccess) {
+                            dialog.dismiss()
+                        } else {
+                            viewShackBar(context, binding.root, "Notify not created")
+                        }
                     }
                 }
             }
+        } else {
+            sdk33AndUp {
+                requestAllowNotify.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
         }
     }
-
     private fun shareProduct(product: Product) {
         lifecycleScope.launch {
             val image = getImageFromUrl(product.image)

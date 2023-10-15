@@ -16,10 +16,10 @@ import com.example.fake_shop.data.NotifyDelay
 object NotifyUtils {
     fun getDelayByRadioBtn(radioBtnId: Int): NotifyDelay {
         return when (radioBtnId) {
-            R.id._15_minutes -> NotifyDelay.FifteenMinutes
-            R.id._1_hour -> NotifyDelay.OneHour
-            R.id._1_day -> NotifyDelay.OneDay
-            R.id._7_days -> NotifyDelay.SevenDays
+            R.id._Fifteen_minutes -> NotifyDelay.FifteenMinutes
+            R.id._One_hour -> NotifyDelay.OneHour
+            R.id._One_day -> NotifyDelay.OneDay
+            R.id._Seven_days -> NotifyDelay.SevenDays
             else -> NotifyDelay.None
         }
     }
@@ -46,13 +46,12 @@ object NotifyUtils {
             NotificationManager.IMPORTANCE_DEFAULT
         )
         return try {
-            manager.createNotificationChannel(chanel)
-            val notification = Notification.Builder(context, NOTIFY_CHANEL_NAME).apply {
+            val notification = Notification.Builder(context, NOTIFY_CHANEL_ID).apply {
                 setContentTitle("Notify created")
                 setContentText(getDelayText(delay))
                 setSmallIcon(R.drawable.notification)
-
             }.build()
+            manager.createNotificationChannel(chanel)
             manager.notify(APP_ID, notification)
             true
         } catch (e: Exception) {
