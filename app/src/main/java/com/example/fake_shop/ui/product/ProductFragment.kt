@@ -28,11 +28,10 @@ import com.example.fake_shop.utils.DialogUtils.createNotifyDialog
 import com.example.fake_shop.utils.DialogUtils.viewShackBar
 import com.example.fake_shop.utils.ImageUtils.getImageFromUrl
 import com.example.fake_shop.utils.ImageUtils.getImageToShare
-import com.example.fake_shop.utils.NotifyUtils.createDefaultNotify
 import com.example.fake_shop.utils.NotifyUtils.getDelayByRadioBtn
+import com.example.fake_shop.utils.NotifyUtils.sendAlarmNotify
 import com.example.fake_shop.utils.ProductUtils
 import com.example.fake_shop.utils.ProductUtils.loadImageToImageView
-import com.example.fake_shop.utils.SDKCheckUtils.sdk24AndUp
 import com.example.fake_shop.utils.SDKCheckUtils.sdk33AndUp
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.getViewModel
@@ -58,7 +57,7 @@ class ProductFragment : Fragment() {
 
     private fun initArguments() {
         if (arguments != null) {
-            val id = this.arguments?.getString("product_id")
+            val id = this.arguments?.getString(PRODUCT_PARAM)
             if (id != null) {
                 viewModel.init(id)
             }
@@ -205,6 +204,7 @@ class ProductFragment : Fragment() {
     }
 
     private fun createNotify() {
+        val product = viewModel.getCurProduct()
         val context = requireContext()
         val manager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -219,19 +219,12 @@ class ProductFragment : Fragment() {
                 val notifyDelay = getDelayByRadioBtn(dialogBinding.timeGroup.checkedRadioButtonId)
                 if (notifyDelay == NotifyDelay.None) {
                     viewShackBar(context, binding.root, "Select delay")
-                } else {
-                    sdk24AndUp {
-                        val isSuccess = createDefaultNotify(
-                            context,
-                            manager,
-                            notifyDelay
-                        )
-                        if (isSuccess) {
-                            dialog.dismiss()
-                        } else {
-                            viewShackBar(context, binding.root, "Notify not created")
-                        }
+                } else if(product != null) {
+                    val isSuccess = sendAlarmNotify(context, manager, notifyDelay, product)
+                    if (!isSuccess) {
+                        viewShackBar(context, binding.root, "Notify not created")
                     }
+                    dialog.dismiss()
                 }
             }
         } else {
@@ -275,5 +268,17 @@ class ProductFragment : Fragment() {
         super.onDestroy()
         _binding = null
         NavigationBarHelper.showNavigationBar(activity)
+    }
+    companion object{
+        const val PRODUCT_PARAM = "product_id"
+        const val PRODUCT_NAME = "product_name"
+        fun newInstance(productId:String): ProductFragment{
+            val fragment = ProductFragment()
+            val args = Bundle().apply {
+                putString(PRODUCT_PARAM, productId)
+            }
+            fragment.arguments = args
+            return fragment
+        }
     }
 }

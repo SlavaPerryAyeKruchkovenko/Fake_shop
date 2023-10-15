@@ -16,6 +16,7 @@ import com.example.fake_shop.data.models.OutputOf
 import com.example.fake_shop.data.models.Product
 import com.example.fake_shop.databinding.FragmentShopBinding
 import com.example.fake_shop.listeners.ProductListener
+import com.example.fake_shop.ui.product.ProductFragment.Companion.PRODUCT_PARAM
 import com.example.fake_shop.utils.DialogUtils.viewShackBar
 import com.google.android.material.snackbar.Snackbar
 import org.koin.androidx.viewmodel.ext.android.getViewModel
@@ -122,7 +123,7 @@ class ShopFragment : Fragment(), ProductListener {
     override fun onClick(product: Product) {
         val bundle = Bundle()
         bundle.apply {
-            putString("product_id", product.id)
+            putString(PRODUCT_PARAM, product.id)
         }
         findNavController().navigate(R.id.action_shop_to_product, bundle)
     }
