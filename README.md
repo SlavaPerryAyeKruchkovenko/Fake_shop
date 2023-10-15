@@ -9,6 +9,7 @@
 </br></br>
 Для того чтобы уведомления работали нужно использовать SDK версии 24 или выше
 </br></br>
+
 [telegram](https://t.me/SlavaKruchkovenko)
 
-[Скачать APK](https://github.com/SlavaPerryAyeKruchkovenko/Fake_shop/releases/download/kotlin/app-debug.apk)
+[Скачать APK](https://github.com/SlavaPerryAyeKruchkovenko/Fake_shop/releases/download/Fake_shop_v.1.1.0/app-debug.apk)
