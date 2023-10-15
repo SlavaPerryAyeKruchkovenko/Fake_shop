@@ -21,4 +21,11 @@
     <string name="download">Download</string>
     <string name="clear">Clear</string>
     <string name="empty_follows">Follows are empty</string>
+    <string name="_15_minutes">15 minutes</string>
+    <string name="_1_hour">1 hour</string>
+    <string name="_1_day">1 day</string>
+    <string name="_7_days">7 days</string>
+    <string name="notify_time">Select notify time</string>
+    <string name="cancel">Cancel</string>
+    <string name="accept">Accept</string>
 </resources>
