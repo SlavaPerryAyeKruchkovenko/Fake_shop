@@ -2,6 +2,7 @@ package com.example.fake_shop.ui.product
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -21,8 +22,9 @@ import com.example.fake_shop.data.models.OutputOf
 import com.example.fake_shop.data.models.Product
 import com.example.fake_shop.databinding.FragmentProductBinding
 import com.example.fake_shop.ui.NavigationBarHelper
-import com.example.fake_shop.utils.getImageFromUrl
-import com.example.fake_shop.utils.savePhotoToExternalStorage
+import com.example.fake_shop.utils.ImageUtils.getImageFromUrl
+import com.example.fake_shop.utils.ImageUtils.getImageToShare
+import com.example.fake_shop.utils.ProductUtils
 import com.google.android.material.snackbar.Snackbar
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.launch
@@ -177,33 +179,54 @@ class ProductFragment : Fragment() {
     }
     private fun initShareBtn() {
         binding.share.setOnClickListener {
-            viewShackBar("Shared function is not allowed")
+            val product = viewModel.getCurProduct()
+            if (product != null) {
+                shareProduct(product)
+            } else {
+                viewShackBar("Product not found")
+            }
+
+        }
+    }
+
+    private fun shareProduct(product: Product) {
+        lifecycleScope.launch {
+            val image = getImageFromUrl(product.image)
+            if (image != null) {
+                val uri = getImageToShare(requireContext(), image)
+                if (uri != null) {
+                    val intent = Intent(Intent.ACTION_SEND).apply {
+                        putExtra(Intent.EXTRA_STREAM, uri)
+                        putExtra(Intent.EXTRA_TEXT, product.title)
+                        putExtra(Intent.EXTRA_SUBJECT, getString(R.string.app_name))
+                        type = "image/*"
+                    }
+                    startActivity(Intent.createChooser(intent, "Share Product"))
+                }
+            } else {
+                viewShackBar("Image not loaded")
+            }
+        }
+    }
+
+    private fun downloadProductImage(context: Context, product: Product) {
+        lifecycleScope.launch {
+            val isSuccess = ProductUtils.downloadImage(context, product)
+            if (isSuccess) {
+                viewShackBar("Success")
+            } else {
+                viewShackBar("Image not download")
+            }
         }
     }
 
     private fun viewShackBar(text: String) {
         val snackbar = Snackbar.make(
-            binding.root, text,
-            Snackbar.LENGTH_LONG
+            binding.root, text, Snackbar.LENGTH_LONG
         )
         snackbar.setBackgroundTint(ContextCompat.getColor(requireContext(), R.color.gray_200))
         snackbar.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
         snackbar.show()
-    }
-
-    private fun downloadProductImage(context: Context, product: Product) {
-        lifecycleScope.launch{
-            val image = getImageFromUrl(product.image)
-            if (image != null) {
-                val isSave = savePhotoToExternalStorage(context, "product", image)
-                if (isSave) {
-                    viewShackBar("Success")
-                } else {
-                    viewShackBar("Image not save")
-                }
-            }
-            viewShackBar("Image not download")
-        }
     }
 
     override fun onDestroy() {
